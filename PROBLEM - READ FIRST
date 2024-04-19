@@ -1,0 +1,110 @@
+The project is about designing a logistics network for airplane spare parts. The data is from a
+real airplane manufacturer with customers (airlines) that operate around the world. Demand for
+airplane spare parts is quite random – airlines will discover worn or failed parts during routine and
+scheduled maintenance, often at airports far away from their headquarters. Airplanes that require spare
+parts need them as soon as possible. The cost of a grounded airplane can be thousands or tens of
+thousands of dollars an hour in lost revenue, penalties and accommodations paid to passengers. To
+support their customers, the airplane manufacturer wants to operate depots in a few countries around
+the world so that the time it takes to ship urgently needed parts is kept within service level targets.
+Suppliers:
+The airplane manufacturer makes some of the parts it sells to customers, but it purchases many
+of the parts from third-party suppliers. The suppliers are abstracted away to the countries they operate
+in: in the data file, supplier 1 is all of the suppliers that operate in the United States (including the
+airplane manufacturer itself). Supplier 2 is all of the suppliers that operate in Brazil, and so on. Assume
+that each supplier can supply any part required, within the following limits:
+Supplier 1 (the U.S.) can supply an essentially unlimited supply of parts. Every other supplier is
+limited to 200,000 kg of parts per year, per supplier.
+Parts:
+There are 127 parts listed in the data file (numbered from 1 to 144). They represent 127 part
+classes (for instance, LED lights come in many different sizes and colours, but together form a part class).
+Each of the part classes has a typical weight listed in kilograms (kg).
+Customer Locations:
+The customers are mostly airlines who operate the aircraft they purchase from our
+manufacturer, although some customers are private operators that own private jets. The customers
+have headquarters in the Americas, Europe, the Middle East and Asia, but also fly these airplanes to
+airports around the world. Demand for a spare part always originates from an airport where the
+grounded airplane is located. Thus, we collect and abstract away customer demand to a large airport
+located in each country where our customers operate. That is, each customer location is given by a two-
+letter country code that represents a country where our customers have flown to. There are 119
+country codes listed in the data files.
+Demand:
+Actual demand for these parts is random, but in this project we use historical demand patterns
+to forecast typical demand. Demand is given per part class, per customer location (country), on an
+annual basis. Assume that demand is constant. For example, demand in the US (country code – US) for
+part class 1 (P1) is exactly 7589.3 units per year.
+Depots:
+One of the main decisions you will be making is where to open and operate depots around the
+world. In the ‘TransCost IN’ sheet of the data file, you’ll find the names of the potential depot locations
+(Chicago, Frankfurt, Sydney, etc.). In the other sheets, these depots appear as D1 through D19. These
+are the same depots (e.g. Chicago is D1, Frankfurt is D2, and so on).
+Each depot will have an effective operating capacity of 150,000 units per year (every order
+requires an employee to pick and load the order onto a delivery truck or airplane, and each depot can
+only employ so many employees), except for the Chicago depot (D1), which has an operating capacity of
+300,000 units per year.
+Service Levels:
+The manufacturer has decided on a time-based service level for its customers: they want to
+commit to having 95% of grounded planes returned to service (RTS) within 24 hours. To achieve this
+service level, the company realized that every country (customer location) should be within range of a
+depot that stocks the entire part catalogue. For strategic planning purposes, consider the following
+when determining what “within range” should mean:
+ It takes a few hours to process a customer order and arrange for a courier transport
+(usually a small private cargo jet)
+ It takes a few more hours to pick the order from the depot and load it onto the
+transport
+ The transport plane flies to the destination
+ It takes a few hours to unload the transport and clear customs
+ It could take a few hours to install the part and certify the grounded airplane as
+airworthy.
+After adding up all of the time before and after the delivery flight, the company decided that
+every country should be within 9 hours flight time of an open depot. The flight times between depots
+and countries are not given, but the transportation costs in the TransCost file are a suitable proxy.
+Assume that any transportation lane that costs more than $5 / kg corresponds to a flight time of longer
+than 9 hours (the actual calculation of transportation costs was loosely based on flight times).
+Inventory
+The real problem that inspired this project also included inventory at each depot. Note that the
+chosen inventory levels determined whether the company could meet the 95% service level above.
+Assume that each depot you open keeps sufficient inventory of every part class to meet any demand, at
+no additional cost, and thus you can ignore the 95% requirement.
+Problem
+Part 1 - Modelling
+ Model the spare parts logistics problem as a mixed integer program.
+ Define the decision variables (with units), and write out and label all the constraints. Do
+not solve the problem yet.
+Pay careful attention to the service level restrictions – there are a few ways to ensure that every
+customer is within 9 hours of an open depot. In a later part of the project, you will be asked to change
+this flight time and resolve. Please consider that when modelling the service level restriction.
+Part 2 - Solve
+Solve the problem using gurobipy. You can follow the guide from class of loading the .csvs into
+data frames then converting to NumPy arrays, or use your own method. Report the following:
+ A short description of the methodology you used
+ Which depots are open in your optimal solution
+ The objective function value, and a brief interpretation of what it calculates
+ What portion of the objective function value is fixed costs, and what portion is variable
+transportation costs
+Part 3 – Metrics
+For your solution to be useful to the company, you have to be able to extract key information
+and report it. Calculate the following:
+ The number of parts and total kg of parts passing through each depot.
+ The % of the capacity each depot is operating at. Which depot has the highest %? Is your
+solution sensitive or robust to an increase in demand of 20%?
+ Customers are ‘allocated’ to depots if we plan to ship parts from that depot to that
+customer. The customer service team needs to know which depot each customer is
+allocated to. Make a list of some of the important countries (customers) and which
+depots they are allocated to.
+ The company is also interested in some technical details. For instance, how big is your
+model: How many variables and constraints did you need?
+Part 4 – Service Level Sensitivity
+The 9-hour flight time rule was set based on estimates for all of the other processing times
+involved in getting a part shipped to a grounded airplane. What are the costs of this service level
+commitment and the chosen flight time rule?
+Resolve the problem multiple times. Each time, use a different flight time rule: 6-hours, 9-hours,
+12-hours and 15-hours. Assume that these correspond to transportation costs of $4.50, $5, $5.50 and $6
+/ kg.
+ How did you modify your formulation to allow for this change?
+ In each case, report on the number of depots required and the objective function value.
+ Create a graph or two that summarizes the output.
+ Finally, make a recommendation to the company.
+The customers expect fast service time (although customers stranded at remote airports may be a
+little understanding that their parts will take some time to arrive). To provide faster service, the costs to
+our company likely have to increase. Is there a flight time rule that best balances faster service against
+the cost of providing that service?
